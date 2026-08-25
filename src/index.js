@@ -105,7 +105,7 @@ bot.on(Events.GuildMemberAdd, async member => {
     if (autoRole) {
       await member.roles.add(autoRole);
     }
-  } catch (e { console.log('Welcome error:', e.message); }
+  } catch (e) { console.log('Welcome error:', e.message); }
 });
 
 // ======================
@@ -193,7 +193,7 @@ bot.on(Events.MessageCreate, async message => {
   // ======================
   // 🎯 CUSTOM COMMANDS
   // ======================
-  if (cmd === 'doxbutcher' || cmd === 'doxButcher') {
+  if (cmd === 'doxbutcher' || cmd === 'doxbutcher') {
     return message.channel.send({
       content: 'Niall Field',
       files: ['https://cdn.discordapp.com/attachments/1491448866577318071/1540332592585510972/IMG_0595.jpg?ex=6a899204&is=6a884084&hm=1bc0e200a8c415debfaf6decccfd0dd394a8fa2c54ae8926481e13fa889fa54b&']
@@ -244,8 +244,9 @@ bot.on(Events.MessageCreate, async message => {
     if (!choices.includes(userChoice)) return message.channel.send('Use: !rps rock / !rps paper / !rps scissors');
     const botChoice = choices[Math.floor(Math.random() * 3)];
     let result;
-    if (userChoice === botChoice) result = 'Tie!';
-    else if (
+    if (userChoice === botChoice) {
+      result = 'Tie!';
+    } else if (
       (userChoice === 'rock' && botChoice === 'scissors') ||
       (userChoice === 'paper' && botChoice === 'rock') ||
       (userChoice === 'scissors' && botChoice === 'paper')
@@ -343,9 +344,15 @@ bot.on(Events.MessageCreate, async message => {
   if (cmd === 'leaderboard' || cmd === 'lb') {
     const sorted = Object.entries(balances).sort((a, b) => b[1] - a[1]).slice(0, 10);
     let text = '🏆 TOP 10 RICHEST\n';
-    for (let i = 0; i < sorted.length; i++) {
-      const user = await bot.users.fetch(sorted[i][0]).catch(() => null);
-      text += `${i + 1}. ${user?.username || 'Unknown'} — ${sorted[i][1]} ${CURRENCY_NAME}\n`;
+    let place = 1;
+    for (const [id, coins] of sorted) {
+      try {
+        const user = await bot.users.fetch(id);
+        text += `${place}. ${user.username} — ${coins} ${CURRENCY_NAME}\n`;
+      } catch {
+        text += `${place}. Unknown User — ${coins} ${CURRENCY_NAME}\n`;
+      }
+      place++;
     }
     return message.channel.send(text);
   }
@@ -443,7 +450,7 @@ bot.on(Events.MessageReactionAdd, async (reaction, user) => {
   if (keyRole) {
     const owner = await bot.users.fetch(keyRole.id).catch(() => null);
     if (owner) {
-      owner.send(`🔑 **KEY REQUEST:** ${user.username} wants access to ${keyRole.name}'s VC!\nReply with: \`!accept ${user.id}\` or \`!deny ${user.id}\``);
+      owner.send(`🔑 **KEY REQUEST:** ${user.username} wants access to ${keyRole.name}'s VC!\nReply with: \`!accept ${user.id}\` or \`!deny ${user.id}\``).catch(() => {});
     }
     return member.send(`✅ Request sent to ${keyRole.name}! They will DM you shortly.`).catch(() => {});
   }
