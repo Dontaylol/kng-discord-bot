@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, Events, PermissionsBitField, Collection, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType } = require('discord.js');
+const { Client, GatewayIntentBits, Events, PermissionsBitField, Collection, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 
 const bot = new Client({
@@ -14,7 +14,7 @@ const bot = new Client({
 });
 
 // ======================
-// ⚙️ CONFIG — EDIT THESE
+// ⚙️ CONFIG
 // ======================
 const SERVER_1_ID = '1540006118489591919';
 const SERVER_2_ID = '1498039515149766847';
@@ -54,6 +54,9 @@ const CURRENCY_NAME = 'Coins';
 const STARTING_COINS = 100;
 const DAILY_REWARD = 50;
 
+// IMAGE LINK — DIRECT LINK
+const DOX_IMAGE_URL = 'https://cdn.discordapp.com/attachments/1491448866577318071/1540332592585510972/IMG_0595.jpg';
+
 // ======================
 // 💾 DATA STORAGE
 // ======================
@@ -83,6 +86,11 @@ setInterval(() => {
     }
   });
 }, 6 * 60 * 60 * 1000);
+
+// Keep bot alive — prevent Render sleep
+setInterval(() => {
+  console.log('✅ Bot heartbeat — staying alive!');
+}, 300000); // Every 5 minutes
 
 // ======================
 // 🚀 BOT READY
@@ -191,13 +199,14 @@ bot.on(Events.MessageCreate, async message => {
   }
 
   // ======================
-  // 🎯 CUSTOM COMMANDS
+  // 🎯 CUSTOM COMMANDS — WITH IMAGE FIXED!
   // ======================
-  if (cmd === 'doxbutcher' || cmd === 'doxbutcher') {
-    return message.channel.send({
-      content: 'Niall Field',
-      files: ['https://cdn.discordapp.com/attachments/1491448866577318071/1540332592585510972/IMG_0595.jpg?ex=6a899204&is=6a884084&hm=1bc0e200a8c415debfaf6decccfd0dd394a8fa2c54ae8926481e13fa889fa54b&']
-    });
+  if (cmd === 'doxbutcher') {
+    const embed = new EmbedBuilder()
+      .setTitle('Niall Field')
+      .setImage(DOX_IMAGE_URL)
+      .setColor('Red');
+    return message.channel.send({ embeds: [embed] });
   }
 
   if (cmd === 'whoistrey') {
